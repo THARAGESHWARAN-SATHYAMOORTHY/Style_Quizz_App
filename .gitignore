@@ -1,1 +1,8 @@
+.DS_Store
+kaggle.json
 backend/ChromaDB_Data/
+backend/images/
+backend/test.py
+backend/myntra-fashion-product-dataset.zip
+backend/__pycache__/
+backend/Fashion Dataset v2.csv
