@@ -6,3 +6,6 @@ backend/test.py
 backend/myntra-fashion-product-dataset.zip
 backend/__pycache__/
 backend/Fashion Dataset v2.csv
+backend/.env
+mobile/node_modules/
+mobile/.expo/

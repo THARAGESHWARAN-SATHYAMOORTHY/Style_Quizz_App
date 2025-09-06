@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from IPython.display import HTML, display
 from PIL import Image
 from sentence_transformers import CrossEncoder
+import math
+
 
 load_dotenv()
 
@@ -246,3 +248,27 @@ def GenerativeSearch(query=None):
             else:
                 break
         previous_rank_score = result["Reranked_scores"]
+
+IMAGE_BASE_PATH = "/Users/tharageshtharun/Projects/Thuli Studio/backend/images/"
+
+def get_random_products(n: int) -> list[dict]:
+    if n <= 0 or fashion_df.empty:
+        return []
+    num_samples = min(n, len(fashion_df))
+    random_samples = fashion_df.sample(n=num_samples, random_state=None)
+
+    products_list = []
+    for _, row in random_samples.iterrows():
+        product_id = row["p_id"]
+        image_path = os.path.join(IMAGE_BASE_PATH, f"{product_id}.jpg")
+
+        # Replace NaN values with None
+        metadata = {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in row.to_dict().items()}
+
+        product_details = {
+            "image_path": image_path,
+            "metadata": metadata
+        }
+        products_list.append(product_details)
+
+    return products_list
