@@ -13,7 +13,9 @@ Expo CLI (installed via npm)
 Disk/Network: First run will download ML models and create a ChromaDB store (requires disk space and internet)
 Git (optional)
 
-### Setup Instructions# Navigate to backend
+## Setup Instructions
+
+### Navigate to backend
     cd Backend
 
 ### Create a virtual environment
