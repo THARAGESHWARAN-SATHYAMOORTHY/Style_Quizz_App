@@ -1,16 +1,15 @@
 import { StyleSheet } from 'react-native';
 
 const FASHION_PALETTE = {
-  primary: '#C5897A', // Muted Terracotta/Rose
-  background: '#FDF8F5', // Soft Off-White/Beige
-  textPrimary: '#333333', // Dark Charcoal
-  textSecondary: '#7A7A7A', // Medium Grey
+  primary: '#C5897A',
+  background: '#FDF8F5',
+  textPrimary: '#333333',
+  textSecondary: '#7A7A7A',
   white: '#FFFFFF',
   border: '#EAEAEA',
 };
 
 export const styles = StyleSheet.create({
-  // --- Universal Container Styles ---
   container: {
     flex: 1,
     backgroundColor: FASHION_PALETTE.background,
@@ -22,7 +21,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 20,
   },
 
-  // --- Header (Login/Signup) ---
   headerContainer: {
     alignItems: 'center',
     paddingTop: 40,
@@ -39,7 +37,6 @@ export const styles = StyleSheet.create({
     color: FASHION_PALETTE.textSecondary,
   },
 
-  // --- Form & Inputs ---
   formContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -69,7 +66,6 @@ export const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  // --- Footer & Buttons (Login/Signup) ---
   footerContainer: {
     paddingBottom: 20,
   },
@@ -101,7 +97,6 @@ export const styles = StyleSheet.create({
     color: FASHION_PALETTE.primary,
   },
 
-  // --- Home Screen General Styles ---
   homeHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -121,10 +116,9 @@ export const styles = StyleSheet.create({
     color: FASHION_PALETTE.textPrimary,
   },
 
-  // --- Swiper & Card Styles (HomeScreen) ---
   swiperContainer: {
     flex: 1,
-    marginTop: -20, // Overlap header slightly for a layered look
+    marginTop: -20,
   },
   card: {
     flex: 0.85,
@@ -205,13 +199,13 @@ export const styles = StyleSheet.create({
     transform: [{ rotate: '15deg' }],
   },
 
-  // --- Matches Screen Styles ---
   matchesHeader: {
     padding: 25,
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: FASHION_PALETTE.border,
   },
+  
   matchesTitle: {
     fontSize: 24,
     fontWeight: '600',
@@ -305,6 +299,7 @@ productImage: {
   height: 180,
   borderRadius: 12,
   resizeMode: 'cover',
+  flex: 1
 },
 
 wishlistIcon: {
@@ -381,7 +376,7 @@ saleText: {
   textTransform: 'uppercase',
 },
  headerContainer: {
-  backgroundColor: '#FDF8F5', // or your theme color
+  backgroundColor: '#FDF8F5',
   borderBottomWidth: 1,
   borderBottomColor: "#ddd",
 },

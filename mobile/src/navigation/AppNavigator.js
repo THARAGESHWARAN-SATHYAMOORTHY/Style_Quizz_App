@@ -8,6 +8,7 @@ import SignupScreen from '../screens/SignupScreen';
 import HomeScreen from '../screens/HomeScreen';
 import SplashScreen from '../screens/SplashScreen';
 import MatchesScreen from '../screens/MatchesScreen';
+import ProductDetailScreen from '../screens/ProductDetailScreen';
 
 const Stack = createStackNavigator();
 
@@ -41,13 +42,17 @@ const AppNavigator = () => {
               component={HomeScreen}
               options={{ headerShown: false }}
             />
-            {/* 👇 Add the Matches screen to the authenticated stack */}
             <Stack.Screen
               name="Matches"
               component={MatchesScreen}
               options={{
                 headerShown: false,
               }}
+            />
+            <Stack.Screen
+              name="ProductDetail"
+              component={ProductDetailScreen}
+              options={{ headerShown: false }}
             />
           </>
         )}

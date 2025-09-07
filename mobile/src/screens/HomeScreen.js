@@ -9,7 +9,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
-// Card Component with safe checks
 const Card = ({ item }) => {
   if (!item || !item.metadata) return null;
 
@@ -23,7 +22,6 @@ const Card = ({ item }) => {
         <Text style={styles.cardName}>{name}</Text>
         <Text style={styles.cardBrand}>{brand}</Text>
 
-        {/* Additional Info Chips */}
         <View style={styles.cardInfoRow}>
           {price && (
             <View style={styles.infoChip}>
@@ -100,7 +98,6 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.homeHeader}>
         <View>
           <Text style={styles.userName}>Discover</Text>
@@ -110,7 +107,6 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Swiper */}
       <View style={styles.swiperContainer}>
         <Swiper
           ref={swiperRef}
@@ -131,7 +127,6 @@ const HomeScreen = ({ navigation }) => {
         />
       </View>
 
-      {/* Action Buttons */}
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.actionButton} onPress={() => swiperRef.current?.swipeLeft()}>
           <Icon name="close" size={32} color="#E74C3C" />
