@@ -34,7 +34,7 @@ cross_encoder = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
 
 def query_from_main_or_cache_collection(query):
-    cache_results = cache_collection.query(query_texts=query, n_results=5)
+    cache_results = cache_collection.query(query_texts=query, n_results=40)
     cache_results
 
     ids = []
@@ -45,13 +45,13 @@ def query_from_main_or_cache_collection(query):
 
     threshold = 0.2
 
-    cache_results = cache_collection.query(query_texts=query, n_results=1)
+    cache_results = cache_collection.query(query_texts=query, n_results=40)
 
     if (
         cache_results["distances"][0] == []
         or cache_results["distances"][0][0] > threshold
     ):
-        results = cache_collection.query(query_texts=query, n_results=5)
+        results = cache_collection.query(query_texts=query, n_results=40)
         keys = []
         values = []
         for key, val in results.items():
@@ -98,7 +98,7 @@ def query_from_main_or_cache_collection(query):
     return results_df
 
 
-def rerank_results(query, results_df, N=10):
+def rerank_results(query, results_df, N=40):
     cross_inputs = [[query, response] for response in results_df["Documents"]]
     cross_rerank_scores = cross_encoder.predict(cross_inputs)
     results_df["Reranked_scores"] = cross_rerank_scores
@@ -107,7 +107,7 @@ def rerank_results(query, results_df, N=10):
     return top_N_rerank
 
 
-def SemanticSearchWithReranking(query=None, top_n=5, imshow=True):
+def SemanticSearchWithReranking(query=None, top_n=40, imshow=False):
     if query is None:
         query = input()
 
@@ -151,15 +151,48 @@ def SemanticSearchWithReranking(query=None, top_n=5, imshow=True):
 
     return top_n_rerank
 
+def SemanticSearchTopNMeta(query=None, top_n=40):
+    if query is None:
+        query = input("Enter your query: ")
 
-def generate_response(query, top_3_RAG, results_df):
+    query_results_df = query_from_main_or_cache_collection(query)
+
+    cross_inputs = [[query, response] for response in query_results_df["Documents"]]
+    cross_rerank_scores = cross_encoder.predict(cross_inputs)
+    query_results_df["Reranked_scores"] = cross_rerank_scores
+
+    top_n_rerank = query_results_df.sort_values(
+        by="Reranked_scores", ascending=False
+    ).head(top_n)
+
+    meta_data_list = []
+    for _, row in top_n_rerank.iterrows():
+        try:
+            meta_dict = ast.literal_eval(row["Metadatas"])
+            product_id = meta_dict.get("Product_id", row["IDs"])
+
+            product_row = fashion_df[fashion_df["p_id"] == int(product_id)]
+            if not product_row.empty:
+                csv_meta = product_row.iloc[0].to_dict()
+                csv_meta = {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in csv_meta.items()}
+                meta_dict["image_url"] = csv_meta.get("img")
+
+            meta_data_list.append(meta_dict)
+
+        except (ValueError, SyntaxError) as e:
+            logging.error(f"Error parsing metadata: {e}")
+            continue
+
+    return meta_data_list
+
+def generate_response(query, RAG_result, results_df):
     prompt = f"""
                 You are a fashion expert who can showcase a product in such a way that the user gets satisfied.
                 You have a question asked by the user in '{query}' and you have some search results from a corpus of fashion products database in the dataframe '{results_df}'. These search results are essentially a product that may be relevant to the user query.
 
                 The column 'documents' inside this dataframe contains the actual description of the product.
 
-                Use the documents in '{top_3_RAG}' to answer the query '{query}'. Frame an informative answer and also, use the dataframe to return product details.
+                Use the documents in '{RAG_result}' to answer the query '{query}'. Frame an informative answer and also, use the dataframe to return product details.
                 Also, use the data from 'Attributes' and provide an answer related to the query '{query}'.
 
                 Follow the guidelines below when performing the task:
@@ -168,6 +201,7 @@ def generate_response(query, top_3_RAG, results_df):
                 3. If you can't provide the complete answer, please provide a disclaimer.
                 4. Do not use keywords similar to 'database', 'results', 'search'.
                 5. Do not start with a welcome note and do not close the conversation with a follow up statement or question else you will be heavily penalized.
+                6. I need just a one line explaing why this product is recommended. ex: This product is recommended because you liked <product_name>.
 
                 The generated response should answer the query directly addressing the user and avoiding additional information.
                 If you think that the query is not relevant to the document, reply with the best possible response.
@@ -226,30 +260,39 @@ def print_response_and_display_image(
 
 def GenerativeSearch(query=None):
     if query is None:
-        query = input()
+        return "Please provide a valid query."
+    
+    recommendation_responses = []
+    recommended_product_ids = []
 
-    semantic_search_df = SemanticSearchWithReranking(
-        query, top_n=5, imshow=False)
+    semantic_search_df = SemanticSearchWithReranking(query, top_n=40, imshow=False)
     semantic_search_df = semantic_search_df.reset_index()
 
-    for index, result in semantic_search_df.iterrows():
-        if index == 0:
-            response = generate_response(query, result[["Documents"]], result)
-            print_response_and_display_image(
-                result_df=result, response=response, result_text="Top product"
-            )
-        else:
-            if abs(previous_rank_score - result["Reranked_scores"]) <= 0.5:
-                response = generate_response(
-                    query, result[["Documents"]], result)
-                print_response_and_display_image(
-                    result_df=result, response=response, result_text="Similar product"
-                )
-            else:
-                break
-        previous_rank_score = result["Reranked_scores"]
+    if semantic_search_df.empty:
+        return []
 
-IMAGE_BASE_PATH = "/Users/tharageshtharun/Projects/Thuli Studio/backend/images/"
+    top_result = semantic_search_df.iloc[0]
+    response = generate_response(query, top_result[["Documents"]], top_result)
+    recommendation_responses.append({
+        "type": "Top Product",
+        "product_id": top_result["IDs"],
+        "response": response
+    })
+    recommended_product_ids.append(top_result["IDs"])
+
+    similar_results = semantic_search_df.iloc[1:31]
+    for _, result in similar_results.iterrows():
+        response = generate_response(query, result[["Documents"]], result)
+        recommendation_responses.append({
+            "type": "Similar Product",
+            "product_id": result["IDs"],
+            "response": response
+        })
+        recommended_product_ids.append(result["IDs"])
+
+    return recommendation_responses, recommended_product_ids
+
+IMAGE_BASE_PATH = "/Users/tharageshtharun/Projects/STYLE_QUIZZ_APP/backend/images/"
 
 def get_random_products(n: int) -> list[dict]:
     if n <= 0 or fashion_df.empty:
@@ -262,7 +305,6 @@ def get_random_products(n: int) -> list[dict]:
         product_id = row["p_id"]
         image_path = os.path.join(IMAGE_BASE_PATH, f"{product_id}.jpg")
 
-        # Replace NaN values with None
         metadata = {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in row.to_dict().items()}
 
         product_details = {
@@ -270,5 +312,44 @@ def get_random_products(n: int) -> list[dict]:
             "metadata": metadata
         }
         products_list.append(product_details)
-
+    
     return products_list
+
+def get_product_by_id(product_id: list[str]) -> dict | None:
+    product_details = []
+    for id in product_id:
+        product_row = fashion_df[fashion_df["p_id"] == int(id)]
+        if product_row.empty:
+            return None
+
+        row = product_row.iloc[0]
+        image_path = os.path.join(IMAGE_BASE_PATH, f"{id}.jpg")
+
+        metadata = {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in row.to_dict().items()}
+
+        product_detail = {
+            "image_path": image_path,
+            "metadata": metadata
+        }
+        product_details.append(product_detail)
+    return product_details
+
+import os
+import google.generativeai as genai
+
+def generate_recommendation_reason(current_product, products_liked):
+    prompt = f"""
+    You are a fashion expert providing personalized recommendations. 
+    The user is viewing this product: {current_product}.
+
+    The user has liked the following products: {products_liked}.
+
+    Based on the user's liked products and the current product, provide a single, clear, natural one-line explanation why this product is recommended. 
+    Note: ANSWER BASED ON THE PRODUCTS LIKED BY THE USER.
+    Example: "This product is recommended because you liked <product_name>." 
+    Keep it concise and avoid extra information or greetings.
+    """
+    model = genai.GenerativeModel(os.getenv("GEMINI_GENERATIVE_MODEL"))
+    response = model.generate_content(prompt)
+    reason = response.text.strip().split("\n")[0]
+    return reason

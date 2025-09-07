@@ -87,7 +87,6 @@ def display_images_with_info(df, images_folder_path, num_images=3):
 
                 mini_table.auto_set_font_size(False)
                 mini_table.set_fontsize(11)
-                # Adjust the scaling factor as needed
                 mini_table.scale(1.2, 1.2)
 
                 images_displayed += 1
