@@ -1,21 +1,55 @@
 import React, { useContext, useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import Swiper from 'react-native-deck-swiper';
 import { styles } from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaView } from "react-native-safe-area-context";
+
 
 // Card Component with safe checks
 const Card = ({ item }) => {
   if (!item || !item.metadata) return null;
 
+  const { name, brand, price, avg_rating, colour, products } = item.metadata;
+
   return (
     <View style={styles.card}>
       <Image source={{ uri: item.metadata.img }} style={styles.cardImage} />
+
       <View style={styles.cardTextContainer}>
-        <Text style={styles.cardName}>{item.metadata.name}</Text>
-        <Text style={styles.cardBrand}>{item.metadata.brand}</Text>
+        <Text style={styles.cardName}>{name}</Text>
+        <Text style={styles.cardBrand}>{brand}</Text>
+
+        {/* Additional Info Chips */}
+        <View style={styles.cardInfoRow}>
+          {price && (
+            <View style={styles.infoChip}>
+              <Icon name="currency-inr" size={16} color="#333" />
+              <Text style={styles.infoText}>{price}</Text>
+            </View>
+          )}
+          {avg_rating && (
+            <View style={styles.infoChip}>
+              <Icon name="star" size={16} color="#f1c40f" />
+              <Text style={styles.infoText}>{parseFloat(avg_rating).toFixed(1)}</Text>
+            </View>
+          )}
+          {colour && (
+            <View style={styles.infoChip}>
+              <Icon name="palette" size={16} color="#8e44ad" />
+              <Text style={styles.infoText}>{colour}</Text>
+            </View>
+          )}
+          {products && (
+            <View style={styles.infoChip}>
+              <Icon name="tag" size={16} color="#2980b9" />
+              <Text style={styles.infoText}>{products}</Text>
+            </View>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -28,27 +62,36 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const swiperRef = useRef(null);
 
-  // Fetch products from FastAPI backend
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get('http://10.0.2.2:8000/products/?n=10'); // Use 10.0.2.2 for Android emulator
-        setFashionItems(response.data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://10.0.2.2:8000/products/?n=20');
+      setFashionItems(response.data);
+      setLikedItems([]);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+    }, [fetchProducts])
+  );
 
   const handleSwipeRight = useCallback((cardIndex) => {
     setLikedItems(currentLikedItems => [...currentLikedItems, fashionItems[cardIndex]]);
   }, [fashionItems]);
 
   const handleSwipedAll = useCallback(() => {
-    navigation.navigate('Matches', { likedItems });
+    const likedIds = likedItems.map((item) => item.metadata.p_id);
+    navigation.navigate('Matches', { likedItems, likedIds });
   }, [navigation, likedItems]);
 
   if (loading) {
@@ -60,8 +103,7 @@ const HomeScreen = ({ navigation }) => {
       {/* Header */}
       <View style={styles.homeHeader}>
         <View>
-          <Text style={styles.welcomeMessage}>Discover</Text>
-          <Text style={styles.userName}>{userInfo?.name || 'Fashionista'}</Text>
+          <Text style={styles.userName}>Discover</Text>
         </View>
         <TouchableOpacity onPress={logout}>
           <Icon name="logout" size={26} color="#333" />

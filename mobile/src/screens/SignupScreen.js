@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from './styles';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const SignupScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -39,7 +39,6 @@ const SignupScreen = ({ navigation }) => {
         style={styles.keyboardAvoidingContainer}>
         <View style={styles.headerContainer}>
           <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Let's get you started</Text>
         </View>
 
         <View style={styles.formContainer}>
