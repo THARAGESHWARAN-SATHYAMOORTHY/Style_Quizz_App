@@ -274,4 +274,154 @@ export const styles = StyleSheet.create({
     color: '#ccc',
     marginTop: 10,
   },
+  gridContainer: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between',
+  padding: 12,
+},
+
+productCard: {
+  width: '48%',
+  backgroundColor: FASHION_PALETTE.white,
+  borderRadius: 12,
+  marginBottom: 15,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 3,
+  padding: 10,
+},
+
+imageWrapper: {
+  position: 'relative',
+  borderRadius: 12,
+  overflow: 'hidden',
+},
+
+productImage: {
+  width: '100%',
+  height: 180,
+  borderRadius: 12,
+  resizeMode: 'cover',
+},
+
+wishlistIcon: {
+  position: 'absolute',
+  top: 8,
+  right: 8,
+  backgroundColor: 'rgba(255,255,255,0.9)',
+  borderRadius: 20,
+  padding: 5,
+},
+
+productName: {
+  fontSize: 14,
+  fontWeight: '600',
+  color: FASHION_PALETTE.textPrimary,
+  marginTop: 8,
+},
+
+productBrand: {
+  fontSize: 12,
+  color: FASHION_PALETTE.textSecondary,
+  marginBottom: 5,
+},
+
+priceRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+
+discountedPrice: {
+  fontSize: 14,
+  fontWeight: 'bold',
+  color: '#222',
+  marginRight: 5,
+},
+
+originalPrice: {
+  fontSize: 12,
+  color: '#888',
+  textDecorationLine: 'line-through',
+  marginRight: 5,
+},
+
+discountLabel: {
+  fontSize: 12,
+  color: '#E74C3C',
+  fontWeight: '600',
+},
+
+ratingRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: 4,
+},
+
+ratingText: {
+  fontSize: 12,
+  color: '#444',
+  marginLeft: 3,
+},
+saleTag: {
+  position: 'absolute',
+  top: 8,
+  left: 8,
+  backgroundColor: '#E74C3C',
+  paddingHorizontal: 8,
+  paddingVertical: 3,
+  borderRadius: 6,
+},
+saleText: {
+  color: '#fff',
+  fontSize: 12,
+  fontWeight: 'bold',
+  textTransform: 'uppercase',
+},
+ headerContainer: {
+  backgroundColor: '#FDF8F5', // or your theme color
+  borderBottomWidth: 1,
+  borderBottomColor: "#ddd",
+},
+
+matchesHeader: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  paddingHorizontal: 16,
+  paddingVertical: 12,
+},
+
+matchesTitle: {
+  fontSize: 18,
+  fontWeight: "600",
+  color: "#333",
+},
+
+wishlistToggle: {
+  padding: 8,
+},
+cardInfoRow: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  marginTop: 8,
+},
+infoChip: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#f2f2f2',
+  borderRadius: 20,
+  paddingHorizontal: 8,
+  paddingVertical: 4,
+  marginRight: 6,
+  marginBottom: 6,
+},
+infoText: {
+  marginLeft: 4,
+  fontSize: 12,
+  color: '#333',
+},
+
 });
