@@ -1,7 +1,5 @@
 ### Future Improvements
 
-Here are potential enhancements that could be made to the Style Quiz App if more time were available, addressing the "Future improvements" deliverable requirement[cite: 282]:
-
 * **Enhanced User Profiling:** The current model recommends items based on recent likes and dislikes[cite: 7, 213]. A future version could build a more detailed and long-term user style profile. [cite_start]This would involve tracking preferences over time for features like color, fit, occasion, and brand to provide more deeply personalized recommendations[cite: 262].
 
 * **Scalability and Performance:** The current implementation uses a local ChromaDB for development[cite: 32]. [cite_start]To handle thousands of requests as per the "depth of implementation" goal[cite: 269], the backend could be migrated to a cloud-based vector database. [cite_start]Additionally, implementing more robust caching strategies beyond the simple index search cache [cite: 52] would improve performance.
