@@ -1,13 +1,16 @@
-import json
 import ast
+import json
 import logging
+from typing import Dict, List
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from search_and_rank import get_random_products, get_product_by_id, SemanticSearchTopNMeta, generate_recommendation_reason
-from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
-from typing import List, Dict
+from pydantic import BaseModel
 
+from search_and_rank import (SemanticSearchTopNMeta,
+                             generate_recommendation_reason, get_product_by_id,
+                             get_random_products)
 
 IMAGE_BASE_PATH = "/Users/tharageshtharun/Projects/STYLE_QUIZZ_APP/backend/images/"
 
@@ -31,7 +34,8 @@ def get_products(n: int = 10):
 
 class RecommendationRequest(BaseModel):
     liked_ids: list[str]
-    
+
+
 class RecommendationRequestReason(BaseModel):
     current_product: Dict
     liked_list: List[int]
@@ -73,7 +77,9 @@ def get_recommendations(req: RecommendationRequest):
                     logging.error(f"Could not parse metadata: {meta_string}")
                     continue
         else:
-            logging.error(f"Unexpected metadata type: {type(meta_string)} -> {meta_string}")
+            logging.error(
+                f"Unexpected metadata type: {type(meta_string)} -> {meta_string}"
+            )
             continue
 
         if parsed and "Product_attributes" in parsed:
@@ -83,13 +89,13 @@ def get_recommendations(req: RecommendationRequest):
 
     return recommendations
 
-@app.post('/recommend_reason/')
+
+@app.post("/recommend_reason/")
 def generate_recommend_reason(req: RecommendationRequestReason):
     products = get_product_by_id(req.liked_list)
     try:
         reason = generate_recommendation_reason(
-            current_product=req.current_product,
-            products_liked=products
+            current_product=req.current_product, products_liked=products
         )
         return {"reason": reason}
     except Exception as e:

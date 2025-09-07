@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
-} from 'react-native';
-import { styles } from './styles';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import axios from 'axios';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { styles } from "./styles";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import axios from "axios";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const MatchesScreen = ({ route, navigation }) => {
   const { likedIds } = route.params;
@@ -28,16 +28,23 @@ const MatchesScreen = ({ route, navigation }) => {
       }
 
       try {
-        const response = await axios.post("http://10.0.2.2:8000/recommendation/", {
-          liked_ids: likedIds.map(String),
-        });
+        const response = await axios.post(
+          "http://10.0.2.2:8000/recommendation/",
+          {
+            liked_ids: likedIds.map(String),
+          },
+        );
 
         const formattedData = response.data.map((product) => {
           const price = parseFloat(product.Price_INR);
-          const originalPrice = product.Original_Price_INR ? parseFloat(product.Original_Price_INR) : null;
+          const originalPrice = product.Original_Price_INR
+            ? parseFloat(product.Original_Price_INR)
+            : null;
           let discount = null;
           if (originalPrice && price < originalPrice) {
-            discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+            discount = Math.round(
+              ((originalPrice - price) / originalPrice) * 100,
+            );
           }
 
           return {
@@ -48,8 +55,12 @@ const MatchesScreen = ({ route, navigation }) => {
               price: price,
               originalPrice: originalPrice,
               discount: discount,
-              avg_rating: product.Rating ? parseFloat(product.Rating).toFixed(1) : null,
-              img: product.image_url || `http://10.0.2.2:8000/images/${product.Product_id}.jpg`,
+              avg_rating: product.Rating
+                ? parseFloat(product.Rating).toFixed(1)
+                : null,
+              img:
+                product.image_url ||
+                `http://10.0.2.2:8000/images/${product.Product_id}.jpg`,
               description: product.Description,
               size: product.Size,
               colour: product.Colour,
@@ -60,14 +71,14 @@ const MatchesScreen = ({ route, navigation }) => {
 
         setRecommendedItems(formattedData);
       } catch (error) {
-        console.error('Failed to fetch recommendations:', error);
+        console.error("Failed to fetch recommendations:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchRecommendations();
-  }, [likedIds]); 
+  }, [likedIds]);
 
   const toggleWishlist = (item) => {
     setWishlist((prev) => {
@@ -79,7 +90,8 @@ const MatchesScreen = ({ route, navigation }) => {
       }
     });
   };
-  const isWishlisted = (item) => wishlist.some((p) => p.metadata.p_id === item.metadata.p_id);
+  const isWishlisted = (item) =>
+    wishlist.some((p) => p.metadata.p_id === item.metadata.p_id);
 
   const displayItems = showWishlist ? wishlist : recommendedItems;
 
@@ -96,13 +108,17 @@ const MatchesScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.matchesHeader}>
         <Text style={styles.matchesTitle}>
-          {showWishlist ? 'Your Wishlist' : 'Your Style Matches'}
+          {showWishlist ? "Your Wishlist" : "Your Style Matches"}
         </Text>
         <TouchableOpacity
           style={styles.wishlistToggle}
           onPress={() => setShowWishlist(!showWishlist)}
         >
-          <Icon name={showWishlist ? 'cards-heart' : 'heart'} size={24} color="#E74C3C" />
+          <Icon
+            name={showWishlist ? "cards-heart" : "heart"}
+            size={24}
+            color="#E74C3C"
+          />
         </TouchableOpacity>
       </View>
 
@@ -114,18 +130,26 @@ const MatchesScreen = ({ route, navigation }) => {
               <TouchableOpacity
                 key={metadata.p_id}
                 style={styles.productCard}
-                onPress={() => navigation.navigate('ProductDetail', { product: item, likedIds: likedIds })}
+                onPress={() =>
+                  navigation.navigate("ProductDetail", {
+                    product: item,
+                    likedIds: likedIds,
+                  })
+                }
               >
                 <View style={styles.imageWrapper}>
-                  <Image source={{ uri: metadata.img }} style={styles.productImage} />
+                  <Image
+                    source={{ uri: metadata.img }}
+                    style={styles.productImage}
+                  />
                   <TouchableOpacity
                     style={styles.wishlistIcon}
                     onPress={() => toggleWishlist(item)}
                   >
                     <Icon
-                      name={isWishlisted(item) ? 'heart' : 'heart-outline'}
+                      name={isWishlisted(item) ? "heart" : "heart-outline"}
                       size={22}
-                      color={isWishlisted(item) ? '#E74C3C' : '#333'}
+                      color={isWishlisted(item) ? "#E74C3C" : "#333"}
                     />
                   </TouchableOpacity>
                   {metadata.discount && (
@@ -143,8 +167,12 @@ const MatchesScreen = ({ route, navigation }) => {
                   <Text style={styles.discountedPrice}>₹{metadata.price}</Text>
                   {metadata.originalPrice && metadata.discount && (
                     <>
-                      <Text style={styles.originalPrice}>₹{metadata.originalPrice}</Text>
-                      <Text style={styles.discountLabel}>{metadata.discount}% off</Text>
+                      <Text style={styles.originalPrice}>
+                        ₹{metadata.originalPrice}
+                      </Text>
+                      <Text style={styles.discountLabel}>
+                        {metadata.discount}% off
+                      </Text>
                     </>
                   )}
                 </View>
@@ -162,8 +190,8 @@ const MatchesScreen = ({ route, navigation }) => {
             <Icon name="tshirt-crew-outline" size={60} color="#ccc" />
             <Text style={styles.noMatchesText}>
               {showWishlist
-                ? 'Your wishlist is empty.'
-                : 'No recommendations found.'}
+                ? "Your wishlist is empty."
+                : "No recommendations found."}
             </Text>
             {!showWishlist && (
               <Text style={styles.noMatchesSubText}>
@@ -176,9 +204,11 @@ const MatchesScreen = ({ route, navigation }) => {
 
       {!showWishlist && (
         <View style={styles.matchesFooter}>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.goBack()}
+          >
             <Text style={styles.buttonText}>Discover More</Text>
-            
           </TouchableOpacity>
         </View>
       )}

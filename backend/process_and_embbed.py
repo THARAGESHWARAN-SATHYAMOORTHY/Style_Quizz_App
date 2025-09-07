@@ -6,7 +6,8 @@ import chromadb
 import google.generativeai as genai
 import matplotlib.pyplot as plt
 import pandas as pd
-from chromadb.utils.embedding_functions import GoogleGenerativeAiEmbeddingFunction
+from chromadb.utils.embedding_functions import \
+    GoogleGenerativeAiEmbeddingFunction
 from dotenv import load_dotenv
 from PIL import Image, UnidentifiedImageError
 
@@ -48,9 +49,7 @@ def display_images_with_info(df, images_folder_path, num_images=3):
     fig, axes = plt.subplots(num_images, 2, figsize=(20, num_images * 5))
     images_displayed = 0
     for i, (idx, row) in enumerate(df.iterrows()):
-        image_path = os.path.join(
-            images_folder_path, str(
-                row["p_id"]) + ".jpg")
+        image_path = os.path.join(images_folder_path, str(row["p_id"]) + ".jpg")
         if os.path.exists(image_path):
             try:
                 img = Image.open(image_path)
@@ -162,8 +161,7 @@ def clean_metadata(meta: dict):
     return clean_meta
 
 
-for idx, (p_id, metadata) in enumerate(
-        zip(fashion_df["p_id"], fashion_df["metadata"])):
+for idx, (p_id, metadata) in enumerate(zip(fashion_df["p_id"], fashion_df["metadata"])):
     cleaned_meta = clean_metadata(metadata)
     fashion_collection.add(
         documents=[documents[idx]], ids=[str(p_id)], metadatas=[cleaned_meta]

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -8,35 +8,36 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import { AuthContext } from '../context/AuthContext';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { styles } from './styles';
+} from "react-native";
+import { AuthContext } from "../context/AuthContext";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { styles } from "./styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SignupScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { signup, isLoading } = useContext(AuthContext);
 
   const handleSignup = async () => {
     if (!name || !email || !password) {
-      Alert.alert('Signup Error', 'Please fill in all fields.');
+      Alert.alert("Signup Error", "Please fill in all fields.");
       return;
     }
     try {
       await signup(name, email, password);
     } catch (error) {
-      Alert.alert('Signup Failed', error.message);
+      Alert.alert("Signup Failed", error.message);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingContainer}>
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoidingContainer}
+      >
         <View style={styles.headerContainer}>
           <Text style={styles.title}>Create Account</Text>
         </View>
@@ -81,16 +82,18 @@ const SignupScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.button}
             onPress={handleSignup}
-            disabled={isLoading}>
+            disabled={isLoading}
+          >
             {isLoading ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
               <Text style={styles.buttonText}>Sign Up</Text>
             )}
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
             <Text style={styles.linkText}>
-              Already have an account? <Text style={styles.linkTextBold}>Sign In</Text>
+              Already have an account?{" "}
+              <Text style={styles.linkTextBold}>Sign In</Text>
             </Text>
           </TouchableOpacity>
         </View>

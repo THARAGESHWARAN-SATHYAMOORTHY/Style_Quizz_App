@@ -15,7 +15,6 @@ import { styles } from "./styles";
 
 const { width } = Dimensions.get("window");
 
-
 const ProductDetailScreen = ({ route, navigation }) => {
   const { product, likedIds } = route.params;
   const { metadata } = product;
@@ -23,35 +22,32 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
 
-
-
   useEffect(() => {
-  const fetchReason = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "http://10.0.2.2:8000/recommend_reason/",
-        {
-          current_product: metadata,
-          liked_list: likedIds,
-        },
-        { timeout: 5000 }
-      );
-      await new Promise(resolve => setTimeout(resolve, 20000));
-      setReason(
-        response.data.reason || "This product is recommended for you."
-      );
-    } catch (error) {
-      console.error("Error fetching recommendation reason:", error.message);
-      setReason("Could not fetch recommendation details.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchReason = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          "http://10.0.2.2:8000/recommend_reason/",
+          {
+            current_product: metadata,
+            liked_list: likedIds,
+          },
+          { timeout: 5000 },
+        );
+        await new Promise((resolve) => setTimeout(resolve, 20000));
+        setReason(
+          response.data.reason || "This product is recommended for you.",
+        );
+      } catch (error) {
+        console.error("Error fetching recommendation reason:", error.message);
+        setReason("Could not fetch recommendation details.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  
-  fetchReason();
-}, [metadata, likedIds]);
+    fetchReason();
+  }, [metadata, likedIds]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,7 +77,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
                 marginTop: 10,
               }}
             >
-              <Text style={{ fontSize: 20, fontWeight: "700", color: "#e74c3c" }}>
+              <Text
+                style={{ fontSize: 20, fontWeight: "700", color: "#e74c3c" }}
+              >
                 ₹{metadata.price}
               </Text>
               {metadata.originalPrice && metadata.discount && (
@@ -105,7 +103,11 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
             {metadata.avg_rating && (
               <View
-                style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 8,
+                }}
               >
                 <Icon name="star" size={16} color="#f5a623" />
                 <Text style={{ marginLeft: 4, fontSize: 14, color: "#444" }}>
@@ -141,7 +143,10 @@ const ProductDetailScreen = ({ route, navigation }) => {
             <DetailRow label="Color" value={metadata.colour} />
             <DetailRow label="Size" value={metadata.size} />
             <DetailRow label="Occasion" value={metadata.occasion || "Casual"} />
-            <DetailRow label="Seller" value={metadata.seller || "Style by Zara"} />
+            <DetailRow
+              label="Seller"
+              value={metadata.seller || "Style by Zara"}
+            />
 
             <Text
               style={{
@@ -176,7 +181,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
               alignItems: "center",
             }}
           >
-            <Text style={{ color: "#e74c3c", fontWeight: "600" }}>Add to Cart</Text>
+            <Text style={{ color: "#e74c3c", fontWeight: "600" }}>
+              Add to Cart
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{

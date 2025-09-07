@@ -1,18 +1,18 @@
 import ast
 import logging
+import math
 import os
 
 import chromadb
 import google.generativeai as genai
 import matplotlib.pyplot as plt
 import pandas as pd
-from chromadb.utils.embedding_functions import GoogleGenerativeAiEmbeddingFunction
+from chromadb.utils.embedding_functions import \
+    GoogleGenerativeAiEmbeddingFunction
 from dotenv import load_dotenv
 from IPython.display import HTML, display
 from PIL import Image
 from sentence_transformers import CrossEncoder
-import math
-
 
 load_dotenv()
 
@@ -102,8 +102,7 @@ def rerank_results(query, results_df, N=40):
     cross_inputs = [[query, response] for response in results_df["Documents"]]
     cross_rerank_scores = cross_encoder.predict(cross_inputs)
     results_df["Reranked_scores"] = cross_rerank_scores
-    top_N_rerank = results_df.sort_values(
-        by="Reranked_scores", ascending=False)[:N]
+    top_N_rerank = results_df.sort_values(by="Reranked_scores", ascending=False)[:N]
     return top_N_rerank
 
 
@@ -112,8 +111,7 @@ def SemanticSearchWithReranking(query=None, top_n=40, imshow=False):
         query = input()
 
     query_results_df = query_from_main_or_cache_collection(query)
-    cross_inputs = [[query, response]
-                    for response in query_results_df["Documents"]]
+    cross_inputs = [[query, response] for response in query_results_df["Documents"]]
     cross_rerank_scores = cross_encoder.predict(cross_inputs)
     query_results_df["Reranked_scores"] = cross_rerank_scores
 
@@ -151,6 +149,7 @@ def SemanticSearchWithReranking(query=None, top_n=40, imshow=False):
 
     return top_n_rerank
 
+
 def SemanticSearchTopNMeta(query=None, top_n=40):
     if query is None:
         query = input("Enter your query: ")
@@ -174,7 +173,10 @@ def SemanticSearchTopNMeta(query=None, top_n=40):
             product_row = fashion_df[fashion_df["p_id"] == int(product_id)]
             if not product_row.empty:
                 csv_meta = product_row.iloc[0].to_dict()
-                csv_meta = {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in csv_meta.items()}
+                csv_meta = {
+                    k: (None if isinstance(v, float) and math.isnan(v) else v)
+                    for k, v in csv_meta.items()
+                }
                 meta_dict["image_url"] = csv_meta.get("img")
 
             meta_data_list.append(meta_dict)
@@ -184,6 +186,7 @@ def SemanticSearchTopNMeta(query=None, top_n=40):
             continue
 
     return meta_data_list
+
 
 def generate_response(query, RAG_result, results_df):
     prompt = f"""
@@ -217,7 +220,7 @@ def wrap_text(text, line_length=15):
     words = text.split()
     wrapped_text = "\n".join(
         [
-            " ".join(words[i: i + line_length])
+            " ".join(words[i : i + line_length])
             for i in range(0, len(words), line_length)
         ]
     )
@@ -243,8 +246,7 @@ def display_image(result_df):
     plt.show()
 
 
-def print_response_and_display_image(
-        result_df, response, result_text="Response:"):
+def print_response_and_display_image(result_df, response, result_text="Response:"):
     response_text = " ".join(response)
     wrapped_text = wrap_text(response_text)
     html_content = f"""
@@ -261,7 +263,7 @@ def print_response_and_display_image(
 def GenerativeSearch(query=None):
     if query is None:
         return "Please provide a valid query."
-    
+
     recommendation_responses = []
     recommended_product_ids = []
 
@@ -273,26 +275,28 @@ def GenerativeSearch(query=None):
 
     top_result = semantic_search_df.iloc[0]
     response = generate_response(query, top_result[["Documents"]], top_result)
-    recommendation_responses.append({
-        "type": "Top Product",
-        "product_id": top_result["IDs"],
-        "response": response
-    })
+    recommendation_responses.append(
+        {"type": "Top Product", "product_id": top_result["IDs"], "response": response}
+    )
     recommended_product_ids.append(top_result["IDs"])
 
     similar_results = semantic_search_df.iloc[1:31]
     for _, result in similar_results.iterrows():
         response = generate_response(query, result[["Documents"]], result)
-        recommendation_responses.append({
-            "type": "Similar Product",
-            "product_id": result["IDs"],
-            "response": response
-        })
+        recommendation_responses.append(
+            {
+                "type": "Similar Product",
+                "product_id": result["IDs"],
+                "response": response,
+            }
+        )
         recommended_product_ids.append(result["IDs"])
 
     return recommendation_responses, recommended_product_ids
 
+
 IMAGE_BASE_PATH = "/Users/tharageshtharun/Projects/STYLE_QUIZZ_APP/backend/images/"
+
 
 def get_random_products(n: int) -> list[dict]:
     if n <= 0 or fashion_df.empty:
@@ -305,15 +309,16 @@ def get_random_products(n: int) -> list[dict]:
         product_id = row["p_id"]
         image_path = os.path.join(IMAGE_BASE_PATH, f"{product_id}.jpg")
 
-        metadata = {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in row.to_dict().items()}
-
-        product_details = {
-            "image_path": image_path,
-            "metadata": metadata
+        metadata = {
+            k: (None if isinstance(v, float) and math.isnan(v) else v)
+            for k, v in row.to_dict().items()
         }
+
+        product_details = {"image_path": image_path, "metadata": metadata}
         products_list.append(product_details)
-    
+
     return products_list
+
 
 def get_product_by_id(product_id: list[str]) -> dict | None:
     product_details = []
@@ -325,17 +330,20 @@ def get_product_by_id(product_id: list[str]) -> dict | None:
         row = product_row.iloc[0]
         image_path = os.path.join(IMAGE_BASE_PATH, f"{id}.jpg")
 
-        metadata = {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in row.to_dict().items()}
-
-        product_detail = {
-            "image_path": image_path,
-            "metadata": metadata
+        metadata = {
+            k: (None if isinstance(v, float) and math.isnan(v) else v)
+            for k, v in row.to_dict().items()
         }
+
+        product_detail = {"image_path": image_path, "metadata": metadata}
         product_details.append(product_detail)
     return product_details
 
+
 import os
+
 import google.generativeai as genai
+
 
 def generate_recommendation_reason(current_product, products_liked):
     prompt = f"""

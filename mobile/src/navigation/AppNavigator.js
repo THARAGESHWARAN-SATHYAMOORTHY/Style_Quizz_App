@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { AuthContext } from '../context/AuthContext';
+import React, { useContext } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { AuthContext } from "../context/AuthContext";
 
-import LoginScreen from '../screens/LoginScreen';
-import SignupScreen from '../screens/SignupScreen';
-import HomeScreen from '../screens/HomeScreen';
-import SplashScreen from '../screens/SplashScreen';
-import MatchesScreen from '../screens/MatchesScreen';
-import ProductDetailScreen from '../screens/ProductDetailScreen';
+import LoginScreen from "../screens/LoginScreen";
+import SignupScreen from "../screens/SignupScreen";
+import HomeScreen from "../screens/HomeScreen";
+import SplashScreen from "../screens/SplashScreen";
+import MatchesScreen from "../screens/MatchesScreen";
+import ProductDetailScreen from "../screens/ProductDetailScreen";
 
 const Stack = createStackNavigator();
 

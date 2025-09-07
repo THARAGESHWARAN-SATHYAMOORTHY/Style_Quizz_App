@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,22 +8,21 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthContext } from '../context/AuthContext';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { styles } from './styles';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../context/AuthContext";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { styles } from "./styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { login, isLoading } = useContext(AuthContext);
 
   useEffect(() => {
     const loadLastEmail = async () => {
-      const lastEmail = await AsyncStorage.getItem('lastUserEmail');
+      const lastEmail = await AsyncStorage.getItem("lastUserEmail");
       if (lastEmail) {
         setEmail(lastEmail);
       }
@@ -33,21 +32,22 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Login Error', 'Please enter both email and password.');
+      Alert.alert("Login Error", "Please enter both email and password.");
       return;
     }
     try {
       await login(email, password);
     } catch (error) {
-      Alert.alert('Login Failed', error.message);
+      Alert.alert("Login Failed", error.message);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingContainer}>
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoidingContainer}
+      >
         <View style={styles.headerContainer}>
           <Text style={styles.title}>Welcome Back</Text>
         </View>
@@ -85,14 +85,15 @@ const LoginScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.button}
             onPress={handleLogin}
-            disabled={isLoading}>
+            disabled={isLoading}
+          >
             {isLoading ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
               <Text style={styles.buttonText}>Sign In</Text>
             )}
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
             <Text style={styles.linkText}>
               New to our app? <Text style={styles.linkTextBold}>Sign Up</Text>
             </Text>

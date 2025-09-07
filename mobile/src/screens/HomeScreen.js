@@ -1,13 +1,24 @@
-import React, { useContext, useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { AuthContext } from '../context/AuthContext';
-import Swiper from 'react-native-deck-swiper';
-import { styles } from './styles';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import axios from 'axios';
-import { useFocusEffect } from '@react-navigation/native';
+import React, {
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { AuthContext } from "../context/AuthContext";
+import Swiper from "react-native-deck-swiper";
+import { styles } from "./styles";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 
 const Card = ({ item }) => {
   if (!item || !item.metadata) return null;
@@ -32,7 +43,9 @@ const Card = ({ item }) => {
           {avg_rating && (
             <View style={styles.infoChip}>
               <Icon name="star" size={16} color="#f1c40f" />
-              <Text style={styles.infoText}>{parseFloat(avg_rating).toFixed(1)}</Text>
+              <Text style={styles.infoText}>
+                {parseFloat(avg_rating).toFixed(1)}
+              </Text>
             </View>
           )}
           {colour && (
@@ -63,7 +76,7 @@ const HomeScreen = ({ navigation }) => {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://10.0.2.2:8000/products/?n=20');
+      const response = await axios.get("http://10.0.2.2:8000/products/?n=20");
       setFashionItems(response.data);
       setLikedItems([]);
     } catch (error) {
@@ -80,20 +93,31 @@ const HomeScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       fetchProducts();
-    }, [fetchProducts])
+    }, [fetchProducts]),
   );
 
-  const handleSwipeRight = useCallback((cardIndex) => {
-    setLikedItems(currentLikedItems => [...currentLikedItems, fashionItems[cardIndex]]);
-  }, [fashionItems]);
+  const handleSwipeRight = useCallback(
+    (cardIndex) => {
+      setLikedItems((currentLikedItems) => [
+        ...currentLikedItems,
+        fashionItems[cardIndex],
+      ]);
+    },
+    [fashionItems],
+  );
 
   const handleSwipedAll = useCallback(() => {
     const likedIds = likedItems.map((item) => item.metadata.p_id);
-    navigation.navigate('Matches', { likedItems, likedIds });
+    navigation.navigate("Matches", { likedItems, likedIds });
   }, [navigation, likedItems]);
 
   if (loading) {
-    return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
+    return (
+      <ActivityIndicator
+        size="large"
+        style={{ flex: 1, justifyContent: "center" }}
+      />
+    );
   }
 
   return (
@@ -115,12 +139,24 @@ const HomeScreen = ({ navigation }) => {
           onSwipedRight={handleSwipeRight}
           onSwipedAll={handleSwipedAll}
           cardIndex={0}
-          backgroundColor={'transparent'}
+          backgroundColor={"transparent"}
           stackSize={3}
           stackSeparation={15}
           overlayLabels={{
-            left: { title: 'NOPE', style: { label: styles.nopeLabel, wrapper: styles.overlayWrapper } },
-            right: { title: 'LIKE', style: { label: styles.likeLabel, wrapper: styles.overlayWrapper } },
+            left: {
+              title: "NOPE",
+              style: {
+                label: styles.nopeLabel,
+                wrapper: styles.overlayWrapper,
+              },
+            },
+            right: {
+              title: "LIKE",
+              style: {
+                label: styles.likeLabel,
+                wrapper: styles.overlayWrapper,
+              },
+            },
           }}
           animateOverlayLabelsOpacity
           animateCardOpacity
@@ -128,10 +164,16 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.actionButton} onPress={() => swiperRef.current?.swipeLeft()}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => swiperRef.current?.swipeLeft()}
+        >
           <Icon name="close" size={32} color="#E74C3C" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={() => swiperRef.current?.swipeRight()}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => swiperRef.current?.swipeRight()}
+        >
           <Icon name="heart" size={32} color="#2ECC71" />
         </TouchableOpacity>
       </View>
