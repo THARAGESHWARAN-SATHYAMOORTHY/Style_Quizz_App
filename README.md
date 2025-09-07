@@ -5,7 +5,7 @@ user’s likes and dislikes, the app should algorithmically recommend goods.
 
 
 ## Installation Setup
-### PrerequisitesOS: 
+## PrerequisitesOS: 
     - macOS / Linux / Windows
     - Python: 3.10–3.12 recommended
     - Node.js & npm
