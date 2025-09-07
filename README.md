@@ -6,12 +6,12 @@ user’s likes and dislikes, the app should algorithmically recommend goods.
 
 ## Installation Setup
 ### PrerequisitesOS: 
-macOS / Linux / Windows
-Python: 3.10–3.12 recommended
-Node.js & npm
-Expo CLI (installed via npm)
-Disk/Network: First run will download ML models and create a ChromaDB store (requires disk space and internet)
-Git (optional)
+    - macOS / Linux / Windows
+    - Python: 3.10–3.12 recommended
+    - Node.js & npm
+    - Expo CLI (installed via npm)
+    - Disk/Network: First run will download ML models and create a ChromaDB store (requires disk space and internet)
+    - Git (optional)
 
 ## Setup Instructions
 
