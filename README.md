@@ -4,7 +4,7 @@ delivers a style quiz to users in order to understand their fashion preferences.
 user’s likes and dislikes, the app should algorithmically recommend goods.
 
 
-## Installation Setup
+# Installation Setup
 ## PrerequisitesOS: 
     - macOS / Linux / Windows
     - Python: 3.10–3.12 recommended
